@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capita — Finance Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --gold: #b8952a;
+    --gold-light: #d4af48;
+    --rust: #8b3a1e;
+    --sage: #3d5a47;
+    --muted: #6b6258;
+    --border: #c8bfb0;
+    --card-bg: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(245, 240, 232, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .nav-logo span {
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 8px 18px;
+    letter-spacing: 0.08em !important;
+    transition: background 0.2s !important;
+  }
+
+  .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+  /* ── TICKER ── */
+  .ticker-bar {
+    background: var(--ink);
+    color: var(--paper);
+    height: 36px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  .ticker-label {
+    flex-shrink: 0;
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 500;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 60px;
+    padding-left: 40px;
+    animation: ticker 28s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item { display: flex; gap: 10px; }
+  .ticker-item .sym { color: var(--gold-light); font-weight: 500; }
+  .ticker-item .up { color: #7bc47b; }
+  .ticker-item .dn { color: #e07070; }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-content {
+    padding: 80px 60px 80px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 44px;
+    line-height: 1.75;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 32px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.25s;
+    border: 1px solid var(--ink);
+  }
+
+  .btn-primary:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--ink); }
+  .btn-ghost::after { content: '→'; transition: transform 0.2s; }
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  .hero-stats {
+    position: absolute;
+    bottom: 40px;
+    left: 80px;
+    display: flex;
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.7s 1s forwards;
+  }
+
+  .stat-item .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+  }
+
+  .stat-item .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ── HERO FEATURED CARD ── */
+  .hero-feature {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+  }
+
+  .hero-feature-img {
+    flex: 1;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 420px;
+  }
+
+  .chart-decoration {
+    position: absolute;
+    inset: 0;
+    opacity: 0.25;
+  }
+
+  .hero-feature-body {
+    padding: 40px 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .category-pill {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    margin-bottom: 14px;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .feature-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    font-family: 'DM Mono', monospace;
+    margin-top: 12px;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 80px 80px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .section-link {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .section-link:hover { gap: 12px; }
+
+  /* ── ARTICLE GRID ── */
+  .articles-section {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .article-card {
+    background: var(--card-bg);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .article-card:hover { background: var(--cream); }
+
+  .article-card.featured {
+    grid-row: span 2;
+    padding: 48px;
+  }
+
+  .article-card.featured .art-title {
+    font-size: 1.6rem;
+  }
+
+  .art-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    margin-bottom: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .art-img-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease;
+  }
+
+  .article-card:hover .art-img-inner { transform: scale(1.04); }
+
+  .art-category {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .art-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+
+  .article-card:hover .art-title { color: var(--gold); }
+
+  .art-excerpt {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.7;
+    flex: 1;
+    margin-bottom: 20px;
+  }
+
+  .art-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    font-family: 'DM Mono', monospace;
+    margin-top: auto;
+  }
+
+  .art-author-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0;
+  }
+
+  .art-dot { width: 3px; height: 3px; background: var(--border); border-radius: 50%; }
+
+  /* ── MARKET DASHBOARD ── */
+  .markets-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px;
+  }
+
+  .markets-section .section-title { color: var(--paper); }
+
+  .markets-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 48px;
+  }
+
+  .market-card {
+    background: #111;
+    padding: 28px 24px;
+    transition: background 0.2s;
+  }
+
+  .market-card:hover { background: #1a1a1a; }
+
+  .market-name {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 10px;
+  }
+
+  .market-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .market-change {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .positive { color: #7bc47b; }
+  .negative { color: #e07070; }
+
+  .market-sparkline {
+    margin-top: 16px;
+    height: 48px;
+  }
+
+  .insights-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .insight-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+
+  .insight-card:hover { border-color: var(--gold); }
+
+  .insight-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(184,149,42,0.15);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+
+  .insight-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .insight-text {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── OPINION / COLUMN ── */
+  .opinion-section {
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .opinion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .opinion-card {
+    padding: 0;
+    border-top: 3px solid var(--gold);
+    padding-top: 28px;
+  }
+
+  .opinion-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+
+  .opinion-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .opinion-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .opinion-author-name {
+    font-weight: 500;
+    font-size: 0.88rem;
+    display: block;
+  }
+
+  .opinion-author-title {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── CATEGORIES ── */
+  .categories-section {
+    background: var(--paper);
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  .category-card {
+    border: 1px solid var(--border);
+    padding: 24px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--card-bg);
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .category-card:hover {
+    border-color: var(--gold);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .cat-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .cat-name {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .cat-count {
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .category-card:hover .cat-count { color: rgba(255,255,255,0.5); }
+
+  /* ── NEWSLETTER ── */
+  .newsletter-section {
+    background: var(--gold);
+    padding: 80px;
+    text-align: center;
+  }
+
+  .newsletter-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 16px;
+  }
+
+  .newsletter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .newsletter-desc {
+    font-size: 1rem;
+    color: rgba(0,0,0,0.6);
+    max-width: 440px;
+    margin: 0 auto 36px;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 0;
+    max-width: 440px;
+    margin: 0 auto;
+    border: 1px solid rgba(0,0,0,0.25);
+  }
+
+  .newsletter-input {
+    flex: 1;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    color: var(--ink);
+  }
+
+  .newsletter-input::placeholder { color: rgba(0,0,0,0.4); }
+
+  .newsletter-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .newsletter-btn:hover { background: var(--rust); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    padding: 64px 80px 40px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-brand-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--paper);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .footer-brand-name span { color: var(--gold); }
+
+  .footer-desc {
+    font-size: 0.84rem;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 10px;
+  }
+
+  .social-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .social-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .footer-col-title {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: 0.84rem;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--paper); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SVG chart/bg shapes */
+  .hero-bg-shape {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    section { padding: 60px 40px; }
+    nav { padding: 0 24px; }
+    .hero-content { padding: 60px 40px; }
+    .hero-stats { left: 40px; }
+    .articles-grid { grid-template-columns: 1fr 1fr; }
+    .article-card.featured { grid-column: span 2; }
+    .markets-grid { grid-template-columns: repeat(2, 1fr); }
+    .categories-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .markets-section { padding: 60px 40px; }
+    .newsletter-section { padding: 60px 40px; }
+    footer { padding: 60px 40px 36px; }
+  }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-feature { display: none; }
+    .nav-links { display: none; }
+    .articles-grid { grid-template-columns: 1fr; }
+    .article-card.featured { grid-column: span 1; }
+    .opinion-grid { grid-template-columns: 1fr; }
+    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+    .insights-row { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Capita<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Markets</a></li>
+    <li><a href="#">Investing</a></li>
+    <li><a href="#">Economy</a></li>
+    <li><a href="#">Personal Finance</a></li>
+    <li><a href="#">Crypto</a></li>
+    <li><a href="#" class="nav-cta">Subscribe</a></li>
+  </ul>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-label">Live</div>
+  <div style="flex:1;overflow:hidden;display:flex;align-items:center;">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="sym">S&P 500</span><span>5,248.94</span><span class="up">▲ +0.74%</span></span>
+      <span class="ticker-item"><span class="sym">NASDAQ</span><span>16,421.53</span><span class="up">▲ +1.02%</span></span>
+      <span class="ticker-item"><span class="sym">DJIA</span><span>38,954.72</span><span class="dn">▼ -0.18%</span></span>
+      <span class="ticker-item"><span class="sym">BTC/USD</span><span>68,204.50</span><span class="up">▲ +2.31%</span></span>
+      <span class="ticker-item"><span class="sym">EUR/USD</span><span>1.0854</span><span class="dn">▼ -0.12%</span></span>
+      <span class="ticker-item"><span class="sym">GOLD</span><span>2,348.60</span><span class="up">▲ +0.55%</span></span>
+      <span class="ticker-item"><span class="sym">10Y UST</span><span>4.62%</span><span class="dn">▼ -0.04</span></span>
+      <span class="ticker-item"><span class="sym">WTI OIL</span><span>82.48</span><span class="up">▲ +0.89%</span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span class="sym">S&P 500</span><span>5,248.94</span><span class="up">▲ +0.74%</span></span>
+      <span class="ticker-item"><span class="sym">NASDAQ</span><span>16,421.53</span><span class="up">▲ +1.02%</span></span>
+      <span class="ticker-item"><span class="sym">DJIA</span><span>38,954.72</span><span class="dn">▼ -0.18%</span></span>
+      <span class="ticker-item"><span class="sym">BTC/USD</span><span>68,204.50</span><span class="up">▲ +2.31%</span></span>
+      <span class="ticker-item"><span class="sym">EUR/USD</span><span>1.0854</span><span class="dn">▼ -0.12%</span></span>
+      <span class="ticker-item"><span class="sym">GOLD</span><span>2,348.60</span><span class="up">▲ +0.55%</span></span>
+      <span class="ticker-item"><span class="sym">10Y UST</span><span>4.62%</span><span class="dn">▼ -0.04</span></span>
+      <span class="ticker-item"><span class="sym">WTI OIL</span><span>82.48</span><span class="up">▲ +0.89%</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Editor's Pick — April 2026</div>
+    <h1 class="hero-title">The New Age of <em>Capital</em> Flows</h1>
+    <p class="hero-desc">Navigating a world where AI-driven trading, sovereign wealth shifts, and monetary policy divergence are rewriting the rules of modern investing.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Read Feature</a>
+      <a href="#" class="btn-ghost">Explore All</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-val">2.4M</span>
+        <span class="stat-label">Readers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">840+</span>
+        <span class="stat-label">Articles</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val">12yr</span>
+        <span class="stat-label">Of Coverage</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-feature">
+    <div class="hero-feature-img">
+      <svg class="chart-decoration" viewBox="0 0 600 400" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#b8952a" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#b8952a" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="0" y1="200" x2="600" y2="200" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="0" y1="300" x2="600" y2="300" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="100" y1="0" x2="100" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="200" y1="0" x2="200" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="300" y1="0" x2="300" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="400" y1="0" x2="400" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="500" y1="0" x2="500" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- Area fill -->
+        <path d="M0,320 C50,310 80,340 130,300 C180,260 210,230 260,200 C310,170 340,210 390,160 C440,110 470,130 520,90 C550,70 580,80 600,60 L600,400 L0,400 Z" fill="url(#chartGrad)"/>
+        <!-- Line -->
+        <path d="M0,320 C50,310 80,340 130,300 C180,260 210,230 260,200 C310,170 340,210 390,160 C440,110 470,130 520,90 C550,70 580,80 600,60" fill="none" stroke="#b8952a" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Second line -->
+        <path d="M0,360 C60,350 100,370 160,345 C220,320 250,310 300,290 C350,270 380,285 430,265 C480,245 510,255 560,235 C580,228 592,230 600,225" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4,4" stroke-linecap="round"/>
+        <!-- Dots -->
+        <circle cx="390" cy="160" r="5" fill="#b8952a"/>
+        <circle cx="600" cy="60" r="5" fill="#d4af48"/>
+      </svg>
+      <!-- Overlay text on chart -->
+      <div style="position:absolute;top:30px;left:32px;color:rgba(255,255,255,0.9);">
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">S&P 500 — 12M</div>
+        <div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;line-height:1;">5,248.94</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.78rem;color:#7bc47b;margin-top:4px;">▲ +18.4% YTD</div>
+      </div>
+    </div>
+    <div class="hero-feature-body">
+      <div class="category-pill">Markets</div>
+      <div class="feature-title">Bull Market Resilience: Will Equities Break Record Highs in Q2?</div>
+      <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-top:8px;">Despite persistent rate concerns, equity markets are showing unexpected strength driven by mega-cap earnings and a soft-landing narrative.</p>
+      <div class="feature-meta">
+        <span>Marcus Chen</span>
+        <span>·</span>
+        <span>Apr 19, 2026</span>
+        <span>·</span>
+        <span>9 min read</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES GRID -->
+<section class="articles-section">
+  <div class="section-header fade-in">
+    <h2 class="section-title">Latest Analysis</h2>
+    <a href="#" class="section-link">All Articles →</a>
+  </div>
+  <div class="articles-grid">
+
+    <!-- Featured Article -->
+    <div class="article-card featured fade-in">
+      <div class="art-img">
+        <div class="art-img-inner" style="background:linear-gradient(135deg,#1a3a2a 0%,#0d2a1e 50%,#0a1f14 100%);height:220px;position:relative;overflow:hidden;">
+          <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3;" viewBox="0 0 400 220" preserveAspectRatio="none">
+            <path d="M0,180 L40,150 L80,165 L120,130 L160,110 L200,125 L240,90 L280,70 L320,85 L360,50 L400,30 L400,220 L0,220Z" fill="rgba(61,90,71,0.6)"/>
+            <path d="M0,180 L40,150 L80,165 L120,130 L160,110 L200,125 L240,90 L280,70 L320,85 L360,50 L400,30" fill="none" stroke="#7bc47b" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="art-category">Investing</div>
+      <div class="art-title" style="font-size:1.5rem;">The Compounding Decade: Why Patient Investors Will Win the Next Bull Cycle</div>
+      <p class="art-excerpt">A deep dive into historical return patterns reveals that investors who stayed the course through volatility consistently outperformed market-timers — and the data for 2020–2030 suggests this pattern is strengthening.</p>
+      <div class="art-meta">
+        <div class="art-author-avatar" style="background:#3d5a47;color:#fff;">SC</div>
+        <span>Sarah Calloway</span>
+        <span class="art-dot"></span>
+        <span>Apr 20, 2026</span>
+        <span class="art-dot"></span>
+        <span>12 min</span>
+      </div>
+    </div>
+
+    <div class="article-card fade-in">
+      <div class="art-category">Economy</div>
+      <div class="art-title">Fed Signals Caution as Inflation Edges Back Toward Target</div>
+      <p class="art-excerpt">Powell's latest remarks hint at a delayed rate-cut timeline, with policymakers monitoring core PCE closely before committing to easing.</p>
+      <div class="art-meta">
+        <div class="art-author-avatar" style="background:#1a3a2a;color:#7bc47b;">JP</div>
+        <span>James Park</span>
+        <span class="art-dot"></span>
+        <span>Apr 18</span>
+        <span class="art-dot"></span>
+        <span>6 min</span>
+      </div>
+    </div>
+
+    <div class="article-card fade-in">
+      <div class="art-category">Crypto</div>
+      <div class="art-title">Bitcoin Post-Halving: Institutions Are Rewriting the Playbook</div>
+      <p class="art-excerpt">ETF inflows and treasury diversification are creating a structurally different demand dynamic than any previous crypto cycle.</p>
+      <div class="art-meta">
+        <div class="art-author-avatar" style="background:#2a1a3a;color:#b89de0;">RK</div>
+        <span>Riya Kapoor</span>
+        <span class="art-dot"></span>
+        <span>Apr 17</span>
+        <span class="art-dot"></span>
+        <span>8 min</span>
+      </div>
+    </div>
+
+    <div class="article-card fade-in">
+      <div class="art-category">Personal Finance</div>
+      <div class="art-title">The 50/30/20 Rule is Dead. Here's What Replaces It</div>
+      <p class="art-excerpt">Rising housing costs, student debt, and wage stagnation have broken the classic budgeting framework for Gen Z and Millennials.</p>
+      <div class="art-meta">
+        <div class="art-author-avatar" style="background:#3a2a1a;color:#d4af48;">LT</div>
+        <span>Lisa Tran</span>
+        <span class="art-dot"></span>
+        <span>Apr 16</span>
+        <span class="art-dot"></span>
+        <span>7 min</span>
+      </div>
+    </div>
+
+    <div class="article-card fade-in">
+      <div class="art-category">Real Estate</div>
+      <div class="art-title">Commercial Real Estate's Reckoning: Which Cities Will Emerge Unscathed?</div>
+      <p class="art-excerpt">Office vacancy rates have stabilized in Sun Belt metros while coastal cities face a prolonged workout cycle through 2027.</p>
+      <div class="art-meta">
+        <div class="art-author-avatar" style="background:#1a2a3a;color:#70b4e0;">DN</div>
+        <span>David Nguyen</span>
+        <span class="art-dot"></span>
+        <span>Apr 15</span>
+        <span class="art-dot"></span>
+        <span>10 min</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MARKETS DASHBOARD -->
+<section class="markets-section">
+  <div class="section-header fade-in" style="border-bottom-color:rgba(255,255,255,0.1);">
+    <h2 class="section-title">Market Snapshot</h2>
+    <a href="#" class="section-link" style="color:var(--gold);">Full Dashboard →</a>
+  </div>
+  <div class="markets-grid fade-in">
+    <div class="market-card">
+      <div class="market-name">S&P 500</div>
+      <div class="market-value">5,248.94</div>
+      <div class="market-change positive">▲ +38.44 &nbsp;(+0.74%)</div>
+      <div class="market-sparkline">
+        <svg viewBox="0 0 160 48" style="width:100%;height:100%;">
+          <path d="M0,40 L20,36 L40,38 L60,28 L80,30 L100,22 L120,24 L140,14 L160,10" fill="none" stroke="#7bc47b" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="market-card">
+      <div class="market-name">NASDAQ 100</div>
+      <div class="market-value">16,421.53</div>
+      <div class="market-change positive">▲ +166.7 &nbsp;(+1.02%)</div>
+      <div class="market-sparkline">
+        <svg viewBox="0 0 160 48" style="width:100%;height:100%;">
+          <path d="M0,38 L20,40 L40,34 L60,36 L80,26 L100,20 L120,22 L140,12 L160,8" fill="none" stroke="#7bc47b" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="market-card">
+      <div class="market-name">Dow Jones</div>
+      <div class="market-value">38,954.72</div>
+      <div class="market-change negative">▼ -70.14 &nbsp;(-0.18%)</div>
+      <div class="market-sparkline">
+        <svg viewBox="0 0 160 48" style="width:100%;height:100%;">
+          <path d="M0,20 L20,18 L40,22 L60,18 L80,24 L100,28 L120,26 L140,32 L160,36" fill="none" stroke="#e07070" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="market-card">
+      <div class="market-name">Gold (oz)</div>
+      <div class="market-value">$2,348.60</div>
+      <div class="market-change positive">▲ +12.90 &nbsp;(+0.55%)</div>
+      <div class="market-sparkline">
+        <svg viewBox="0 0 160 48" style="width:100%;height:100%;">
+          <path d="M0,36 L20,32 L40,34 L60,30 L80,28 L100,24 L120,20 L140,18 L160,14" fill="none" stroke="#d4af48" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="insights-row fade-in">
+    <div class="insight-card">
+      <div class="insight-icon">📈</div>
+      <div class="insight-title">Equity Momentum</div>
+      <p class="insight-text">Large-cap growth continues to lead breadth. Tech sector P/E ratios remain elevated but earnings revisions are supportive heading into Q2 reporting.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🏦</div>
+      <div class="insight-title">Fixed Income Watch</div>
+      <p class="insight-text">The 10Y–2Y spread is inverting less aggressively. Markets have repriced rate cuts to September at the earliest, shifting duration strategies.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🌍</div>
+      <div class="insight-title">Global Macro</div>
+      <p class="insight-text">EM currencies remain under pressure as dollar strength persists. China's fiscal stimulus package is being watched closely for spillover effects.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OPINIONS -->
+<section class="opinion-section">
+  <div class="section-header fade-in">
+    <h2 class="section-title">Perspectives</h2>
+    <a href="#" class="section-link">All Columns →</a>
+  </div>
+  <div class="opinion-grid fade-in">
+    <div class="opinion-card">
+      <p class="opinion-quote">"The market is not irrationally exuberant — it is rationally forward-looking. The real risk isn't in current valuations; it's in assuming tomorrow's earnings growth matches today's optimism."</p>
+      <div class="opinion-author">
+        <div class="opinion-avatar" style="background:#1a3a2a;color:#7bc47b;">MC</div>
+        <div>
+          <span class="opinion-author-name">Marcus Chen</span>
+          <span class="opinion-author-title">Senior Markets Correspondent</span>
+        </div>
+      </div>
+    </div>
+    <div class="opinion-card">
+      <p class="opinion-quote">"Quantitative tightening has removed the punchbowl — but the guests are still dancing. When liquidity conditions finally bite, it won't be gradual. It never is."</p>
+      <div class="opinion-author">
+        <div class="opinion-avatar" style="background:#3a1a1a;color:#e07070;">EW</div>
+        <div>
+          <span class="opinion-author-name">Eleanor Walsh</span>
+          <span class="opinion-author-title">Macro Strategist & Columnist</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section">
+  <div class="section-header fade-in">
+    <h2 class="section-title">Explore Topics</h2>
+  </div>
+  <div class="categories-grid fade-in">
+    <a href="#" class="category-card">
+      <span class="cat-icon">📊</span>
+      <div class="cat-name">Markets</div>
+      <div class="cat-count">148 articles</div>
+    </a>
+    <a href="#" class="category-card">
+      <span class="cat-icon">💹</span>
+      <div class="cat-name">Investing</div>
+      <div class="cat-count">112 articles</div>
+    </a>
+    <a href="#" class="category-card">
+      <span class="cat-icon">🏛️</span>
+      <div class="cat-name">Economy</div>
+      <div class="cat-count">96 articles</div>
+    </a>
+    <a href="#" class="category-card">
+      <span class="cat-icon">₿</span>
+      <div class="cat-name">Crypto</div>
+      <div class="cat-count">84 articles</div>
+    </a>
+    <a href="#" class="category-card">
+      <span class="cat-icon">🏠</span>
+      <div class="cat-name">Real Estate</div>
+      <div class="cat-count">67 articles</div>
+    </a>
+    <a href="#" class="category-card">
+      <span class="cat-icon">💰</span>
+      <div class="cat-name">Personal Finance</div>
+      <div class="cat-count">103 articles</div>
+    </a>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section" style="padding:80px;">
+  <div class="newsletter-eyebrow">Free Daily Briefing</div>
+  <h2 class="newsletter-title">Markets move fast.<br>Stay ahead of them.</h2>
+  <p class="newsletter-desc">Get our hand-curated morning brief — market movers, macro insights, and one big idea. No noise.</p>
+  <div class="newsletter-form">
+    <input type="email" class="newsletter-input" placeholder="your@email.com">
+    <button class="newsletter-btn">Subscribe</button>
+  </div>
+  <p style="font-size:0.7rem;color:rgba(0,0,0,0.4);margin-top:14px;letter-spacing:0.06em;">~45,000 subscribers · No spam · Unsubscribe anytime</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="footer-brand-name">Capita<span>.</span></span>
+      <p class="footer-desc">Intelligent financial journalism for investors, professionals, and the curious. We cover markets, macro, and the forces shaping global capital.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn">𝕏</a>
+        <a href="#" class="social-btn">in</a>
+        <a href="#" class="social-btn">▶</a>
+        <a href="#" class="social-btn">@</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Coverage</div>
+      <ul class="footer-links">
+        <li><a href="#">Markets</a></li>
+        <li><a href="#">Investing</a></li>
+        <li><a href="#">Economy</a></li>
+        <li><a href="#">Crypto & Web3</a></li>
+        <li><a href="#">Real Estate</a></li>
+        <li><a href="#">Personal Finance</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Advertise</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links">
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Podcast</a></li>
+        <li><a href="#">Data & Tools</a></li>
+        <li><a href="#">Glossary</a></li>
+        <li><a href="#">RSS Feed</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Capita Media Inc. All rights reserved.</span>
+    <span style="display:flex;gap:24px;">
+      <a href="#" style="color:inherit;text-decoration:none;">Privacy</a>
+      <a href="#" style="color:inherit;text-decoration:none;">Terms</a>
+      <a href="#" style="color:inherit;text-decoration:none;">Disclaimer</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // Intersection Observer for fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Newsletter button interaction
+  document.querySelector('.newsletter-btn').addEventListener('click', function() {
+    const input = document.querySelector('.newsletter-input');
+    if (input.value.includes('@')) {
+      this.textContent = '✓ Subscribed';
+      this.style.background = '#3d5a47';
+      input.value = '';
+      input.placeholder = 'Welcome aboard!';
+    }
+  });
+</script>
+</body>
+</html>
